@@ -11,7 +11,11 @@ import numpy as np
 class Tab(wx.Panel):
     def __init__(self, parent,filename):
         wx.Panel.__init__(self, parent)
+
+        # hyperpara
         k_items = 3
+
+        self.filename = filename
         self.df = self.read_db(filename)
         self.transform_date()
         self.vbox = wx.BoxSizer(wx.VERTICAL)
@@ -109,13 +113,6 @@ class Tab(wx.Panel):
                                             num = num*10 + mandarin2int[y]
                         self.df.at[index, item] = num
                         
-        
-
-    # def set_datatype(self):
-    #     res = dict()
-    #     for col in self.df.columns:
-    #         res[col] = self.df[col].dtype
-    #     return res
     
     def init_table(self):
         # set col title
@@ -285,7 +282,7 @@ class Tab(wx.Panel):
             if self.df[label].dtype in [np.int64,np.float64] or any([l for l in label if l[-1] in ['年','月','日','號']]):
                 self.df[label] = pd.to_numeric(self.df[label], errors='coerce')
 
-        self.df.to_csv('test.csv',index=False, encoding='big5')
+        self.df.to_csv(self.filename,index=False, encoding='big5')
 
 class MainFrame(wx.Frame):
     """
@@ -299,12 +296,13 @@ class MainFrame(wx.Frame):
         self.panel = wx.Panel(self,-1)
         self.nb = wx.Notebook(self.panel)
         # Create the tab windows
+        filenames = ['test.csv','普渡樣本.xlsx']
         # tab1 = Tab(self.nb,"補財庫樣本.xlsx")
-        tab1 = Tab(self.nb,"test.csv")
-        tab2 = Tab(self.nb,"普渡樣本.xlsx")
+        tab1 = Tab(self.nb,filenames[0])
+        tab2 = Tab(self.nb,filenames[1])
 
-        self.nb.AddPage(tab1, "補財庫")
-        self.nb.AddPage(tab2, "普渡")
+        self.nb.AddPage(tab1, filenames[0].split('.')[0])
+        self.nb.AddPage(tab2, filenames[1].split('.')[0])
 
         # Set noteboook in a sizer to create the layout
         sizer = wx.BoxSizer()
