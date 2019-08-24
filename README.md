@@ -2,4 +2,4 @@
 
 usage: pythonw main.py
 
-![image](img/demo.PNG)
+![image](img/demo.png)
