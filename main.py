@@ -173,28 +173,34 @@ class Tab(wx.Panel):
                     self.myGrid.SetCellValue(row_id,col_id,str(row[val]))
     
     def OnEdit(self, event): 
-        edit_id = [idx for idx in self.df['編號'] if idx == int(self.textAreas['編號'].GetValue().strip())]
+        edit_ids = [idx-1 for idx in self.df['編號'] if idx == int(self.textAreas['編號'].GetValue().strip())]
+        print("self.textAreas['編號'].GetValue().strip(), edit_ids:\t"+self.textAreas['編號'].GetValue().strip()+", "+str(edit_ids))
         if not self.textAreas['編號'].GetValue().strip():
-            error_msg(1)
-        elif any(edit_id):
-            for val, text in self.textAreas.items():
-                new_value = text.GetValue().strip()
-                if self.df[val].dtype == np.int64 or val in ['出生年','月','日']:
-                    try:
-                        self.df.at[edit_id,val] = int(new_value)
-                    except:
-                        if new_value:
-                            error_msg(1)
-                elif self.df[val].dtype == np.float64:
-                    try:
-                        self.df.at[edit_id,val] = float(new_value)
-                    except:
-                        if new_value:
-                            error_msg(1)
-                else:
-                    self.df.at[edit_id,val] = new_value
+            print(1)
+            self.error_msg(1)
+        elif len(edit_ids)>0:
+            print(2)
+            for edit_id in edit_ids:
+                for val, text in self.textAreas.items():
+                    new_value = text.GetValue().strip()
+                    if val != '編號' and new_value:
+                        if self.df[val].dtype == np.int64 or val in ['出生年','月','日']:
+                            try:
+                                self.df.at[edit_id,val] = int(new_value)
+                            except:
+                                if new_value:
+                                    self.error_msg(1)
+                        elif self.df[val].dtype == np.float64:
+                            try:
+                                self.df.at[edit_id,val] = float(new_value)
+                            except:
+                                if new_value:
+                                    self.error_msg(1)
+                        else:
+                            self.df.at[edit_id,val] = new_value
         else:
-            error_msg(1)
+            print(3)
+            self.error_msg(1)
 
     def error_msg(self,code,label=None,value=None):
         if code == 0:
@@ -222,7 +228,7 @@ class Tab(wx.Panel):
                         record.append(float(new_value))
                     except:
                         if new_value:
-                            error_msg(0,val,new_value)
+                            self.error_msg(0,val,new_value)
                         else:
                             record.append('')
                 else:
