@@ -173,8 +173,8 @@ class Tab(wx.Panel):
                     self.myGrid.SetCellValue(row_id,col_id,str(row[val]))
     
     def OnEdit(self, event): 
-        edit_id = [idx for idx in self.df['編號'] if idx == int(self.textAreas['編號'].strip())]
-        if not self.textAreas['編號'].strip():
+        edit_id = [idx for idx in self.df['編號'] if idx == int(self.textAreas['編號'].GetValue().strip())]
+        if not self.textAreas['編號'].GetValue().strip():
             error_msg(1)
         elif any(edit_id):
             for val, text in self.textAreas.items():
